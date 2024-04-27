@@ -1,0 +1,3 @@
+[submodule "tire_daq_decoder"]
+	path = tire_daq_decoder
+	url = git@github.com:Mesomat-inc/tire_daq_decoder.git
