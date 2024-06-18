@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 import sys
+import json
+from signal import signal, SIGPIPE, SIG_DFL  
+signal(SIGPIPE,SIG_DFL) 
 
 from tire_daq_decoder.decoder import *
 import sys
@@ -14,18 +17,15 @@ def parse_input(line):
     global  current_func
     if len(line) == 1:
         if line[0] == 'gps':
-            print("now decoding gps")
             current_func = decode_gps
         elif line[0] == 'logs':
-            print("now decoding logs")
             current_func = decode_log
         elif line[0] == 'data':
-            print("now decoding data")
             current_func = decode_packet
         elif line[0] == 'q' or line[0] == '':
             sys.exit(0)
         else:
-            print(current_func(line[0]))
+            print(json.dumps(current_func(line[0])))
     elif len(line) == 0:
         sys.exit(0)
     elif len(line) != 2:
@@ -47,11 +47,12 @@ def parse_input(line):
             sys.exit(1)
 
 if __name__ == "__main__":
-
     if len(sys.argv) >= 2:
         parse_input(sys.argv[1:3])
     
     for inp in sys.stdin:
+        if inp == '':
+            sys.exit(0)
         line = inp.strip().split()
         parse_input(line)
 
